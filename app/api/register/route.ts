@@ -11,6 +11,14 @@ export async function POST(request: Request) {
       testResultNotes.length > 0 ? await embedText(testResultNotes) : null;
     const testResultScore = payload.testResult.score;
 
+    const rawPrice = payload.price;
+
+    let priceNumber = 0;
+
+    if (rawPrice !== undefined && rawPrice !== null && rawPrice !== "") {
+      priceNumber = Number(rawPrice);
+    }
+
     const agentRecord = {
       name: payload.name,
       author: payload.author,
@@ -18,8 +26,10 @@ export async function POST(request: Request) {
       description: payload.description,
       url: payload.url,
       pricing_model: payload.pricingModel,
-      price: Number(payload.price ?? 0),
       category: payload.category,
+      price: priceNumber,
+      rating: Number(payload.rating ?? 0),
+      created_at: new Date().toISOString(),
       test_score: Number(testResultScore ?? 0),
       test_result: testResultNotes || null,
       test_result_embedding: embedding,
@@ -32,12 +42,18 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: error.message },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({ ok: true, agent: data });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ ok: false, error: "Failed to register agent" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "Failed to register agent" },
+      { status: 500 }
+    );
   }
 }

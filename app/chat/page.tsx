@@ -6,6 +6,10 @@ import { AgentCard } from "@/components/agent-card";
 import { Button } from "@/components/ui/button";
 import { useHeaderVisibility } from "@/components/app-frame";
 import { cn } from "@/lib/utils";
+import { agents, categories, type Agent, type Category } from "@/lib/agents";
+import { Send, Sparkles, Star, UserRound, Wallet } from "lucide-react";
+import { useSignOut } from "@coinbase/cdp-hooks";
+import GlobalHeader from "@/components/GlobalHeader";
 import { categories, type Agent } from "@/lib/agents";
 import {
   Bot,
@@ -54,7 +58,7 @@ export default function ChatPage() {
   const [view, setView] = useState<"landing" | "chat">("landing");
   const [prompt, setPrompt] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    categories[0]?.id ?? "ppt",
+    categories[0]?.id ?? "ppt"
   );
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -883,12 +887,14 @@ function ChatBubble({
   from: "user" | "ai";
 }) {
   const alignClass =
-    from === "user" ? "ml-auto bg-gray-200 text-gray-800" : "mr-auto bg-gray-100";
+    from === "user"
+      ? "ml-auto bg-gray-200 text-gray-800"
+      : "mr-auto bg-gray-100";
   return (
     <div
       className={cn(
         "max-w-xl rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm",
-        alignClass,
+        alignClass
       )}
     >
       {typeof children === "string" ? (
@@ -964,7 +970,11 @@ function AgentModal({
                     : "text-gray-600 hover:bg-gray-100",
                 )}
               >
-                {key === "about" ? "About" : key === "example" ? "Example" : "Reviews"}
+                {key === "about"
+                  ? "About"
+                  : key === "example"
+                  ? "Example"
+                  : "Reviews"}
               </button>
             ))}
           </div>
@@ -986,8 +996,12 @@ function AgentModal({
                         key={example.title}
                         className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-gray-200"
                       >
-                        <p className="font-semibold text-gray-900">{example.title}</p>
-                        <p className="mt-1 text-sm text-gray-700">{example.body}</p>
+                        <p className="font-semibold text-gray-900">
+                          {example.title}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-700">
+                          {example.body}
+                        </p>
                       </div>
                     );
                   }
@@ -998,14 +1012,18 @@ function AgentModal({
                         key={example.title}
                         className="space-y-2 rounded-lg bg-white p-4 shadow-sm ring-1 ring-gray-200"
                       >
-                        <p className="font-semibold text-gray-900">{example.title}</p>
+                        <p className="font-semibold text-gray-900">
+                          {example.title}
+                        </p>
                         <img
                           src={example.url}
                           alt={example.caption ?? example.title}
                           className="h-48 w-full rounded-lg object-cover"
                         />
                         {example.caption ? (
-                          <p className="text-xs text-gray-600">{example.caption}</p>
+                          <p className="text-xs text-gray-600">
+                            {example.caption}
+                          </p>
                         ) : null}
                       </div>
                     );
@@ -1017,7 +1035,9 @@ function AgentModal({
                         key={example.title}
                         className="space-y-2 rounded-lg bg-white p-4 shadow-sm ring-1 ring-gray-200"
                       >
-                        <p className="font-semibold text-gray-900">{example.title}</p>
+                        <p className="font-semibold text-gray-900">
+                          {example.title}
+                        </p>
                         <pre className="overflow-auto rounded-lg bg-gray-900 p-3 text-xs text-gray-100">
                           <code>{example.code}</code>
                         </pre>
@@ -1032,7 +1052,9 @@ function AgentModal({
                 })}
 
                 {!(agent.examples ?? []).length ? (
-                  <p className="text-sm text-gray-600">No examples available yet.</p>
+                  <p className="text-sm text-gray-600">
+                    No examples available yet.
+                  </p>
                 ) : null}
               </div>
             )}
@@ -1061,7 +1083,9 @@ function AgentModal({
                 ))}
 
                 {!(agent.reviews ?? []).length ? (
-                  <p className="text-sm text-gray-600">No reviews yet. Be the first.</p>
+                  <p className="text-sm text-gray-600">
+                    No reviews yet. Be the first.
+                  </p>
                 ) : null}
               </div>
             )}
