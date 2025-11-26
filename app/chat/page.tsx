@@ -1,12 +1,12 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AgentCard } from "@/components/agent-card";
 import { Button } from "@/components/ui/button";
 import { useHeaderVisibility } from "@/components/app-frame";
 import { cn } from "@/lib/utils";
-import { categories, type Agent, type Category } from "@/lib/agents";
+import { categories, type Agent } from "@/lib/agents";
 import {
   Bot,
   Feather,
@@ -820,12 +820,19 @@ function PromptComposer({
   );
 }
 
+type CategoryOption = {
+  id: string;
+  label: string;
+  icon?: ReactNode;
+  tint?: string;
+};
+
 function CategoryScroller({
   categories,
   selectedCategory,
   onCategoryChange,
 }: {
-  categories: Category[];
+  categories: CategoryOption[];
   selectedCategory: string;
   onCategoryChange: (value: string) => void;
 }) {
@@ -851,7 +858,7 @@ function CategoryScroller({
                   : category.tint ?? "bg-gray-100 text-gray-600",
               )}
             >
-              {"icon" in category ? (category as any).icon : null}
+              {category.icon}
             </span>
             <span
               className={cn(

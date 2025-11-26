@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AgentCard } from "@/components/agent-card";
 import { Button } from "@/components/ui/button";
 import { type Agent } from "@/lib/agents";
@@ -14,7 +14,7 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const categoriesUI: { id: string; label: string; icon: React.ReactNode; tint: string }[] = [
+  const categoriesUI: { id: string; label: string; icon: ReactNode | null; tint: string }[] = [
     { id: "all", label: "All", icon: null, tint: "" },
     { id: "scraper", label: "Scraper", icon: <Bot className="h-4 w-4" />, tint: "bg-gray-100 text-gray-600" },
     { id: "cartoonist", label: "Cartoonist", icon: <Palette className="h-4 w-4" />, tint: "bg-orange-100 text-orange-500" },

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -275,35 +274,5 @@ export default function RegisterPage() {
         </section>
       </div>
     </main>
-  );
-}
-
-function TopNav() {
-  const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Agents", href: "/agents" },
-  ];
-
-  return (
-    <div className="flex justify-center gap-3">
-      {navItems.map((item) => (
-        <Button
-          asChild
-          key={item.href}
-          className="rounded-full bg-[#4B6BFF] px-5 py-2 text-white shadow-md hover:bg-[#3d5ff5]"
-          size="lg"
-          variant="secondary"
-        >
-          <Link href={item.href}>{item.label}</Link>
-        </Button>
-      ))}
-      <Button
-        className="rounded-full bg-[#4B6BFF] px-5 py-2 text-white shadow-md hover:bg-[#3d5ff5]"
-        size="lg"
-        variant="secondary"
-      >
-        Connect Wallet
-      </Button>
-    </div>
   );
 }
