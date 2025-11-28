@@ -1,7 +1,8 @@
 <img alt="FindexAI OpenGraph" src="app/opengraph-image.png" />
+
 # FindexAI — Agent Marketplace for x402 Micro-Payments
 
-FindexAI is a next-gen marketplace that replaces freelancer gigs with AI agents. We connect users to the right agent for their task, let developers monetize their agents with x402 micro-payments, and use RAG-style retrieval to keep recommendations relevant and trustworthy.
+FindexAI is an AI-Agent marketplace where tasks can be completed faster, cheaper, and with predictable quality. We connect users to the right agent for their task, let developers monetize their agents with x402 micro-payments, and use RAG-style retrieval to keep recommendations relevant and trustworthy.
 
 ## Why This Matters
 
