@@ -1,63 +1,18 @@
-"use client";
-
-import { createContext, PropsWithChildren, useContext, useState } from "react";
-import { Sidebar } from "@/components/sidebar";
-import { Button } from "@/components/ui/button";
 import { useEvmAddress, useSignOut } from "@coinbase/cdp-hooks";
+import { Button } from "./ui/button";
+import Link from "next/link";
+import { useState } from "react";
 
-type HeaderContextValue = {
-  showHeader: boolean;
-  setShowHeader: (value: boolean) => void;
-};
-
-const HeaderContext = createContext<HeaderContextValue | null>(null);
-
-export function useHeaderVisibility() {
-  const ctx = useContext(HeaderContext);
-  if (!ctx) {
-    throw new Error("useHeaderVisibility must be used within AppFrame");
-  }
-  return ctx;
-}
-
-export function AppFrame({ children }: PropsWithChildren) {
-  const { evmAddress } = useEvmAddress();
-  const [collapsed, setCollapsed] = useState(false);
-  const [showHeader, setShowHeader] = useState(true);
-  const isLoggedIn = !!evmAddress; // 로그인 여부
-
-  return (
-    <HeaderContext.Provider value={{ showHeader, setShowHeader }}>
-      <div className="flex h-screen overflow-hidden bg-white text-gray-900">
-        <div className="h-full overflow-hidden">
-          {isLoggedIn && (
-            <Sidebar
-              collapsed={collapsed}
-              onToggle={() => setCollapsed((prev) => !prev)}
-            />
-          )}
-        </div>
-        <div className="flex h-full flex-1 flex-col overflow-hidden">
-          {showHeader ? (
-            <div className="flex items-center justify-end px-6 py-4">
-              {isLoggedIn && <GlobalHeader />}
-            </div>
-          ) : null}
-          <div className="flex-1 overflow-hidden px-6">{children}</div>
-        </div>
-      </div>
-    </HeaderContext.Provider>
-  );
-}
-
-// 원하면 default로도 쓸 수 있게
-export default AppFrame;
-
-export function GlobalHeader() {
+export default function GlobalHeader() {
   const { evmAddress } = useEvmAddress();
   const { signOut } = useSignOut();
   const [copied, setCopied] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const navItems = [
+    { label: "Home", href: "/" },
+    { label: "Agents", href: "/agents" },
+  ];
   const copyToClipboard = async () => {
     if (!evmAddress) return;
 
@@ -69,24 +24,29 @@ export function GlobalHeader() {
       console.error("Failed to copy address:", err);
     }
   };
-
-  const shortAddress =
-    evmAddress != null
-      ? `${evmAddress.slice(0, 6)}...${evmAddress.slice(-4)}`
-      : "Not connected";
-
   return (
     <div className="w-fit flex justify-center gap-3 rounded-full bg-white px-5 py-2 text-white shadow-md">
+      {navItems.map((item) => (
+        <Button
+          asChild
+          key={item.href}
+          className="rounded-full bg-[#4B6BFF] px-5 py-2 text-white shadow-md hover:bg-[#3d5ff5]"
+          size="lg"
+          variant="secondary"
+        >
+          <Link href={item.href}>{item.label}</Link>
+        </Button>
+      ))}
+
       <div className="flex justify-center items-center gap-1">
-        {/* 주소 표시 + 복사 버튼 */}
         <button
           onClick={copyToClipboard}
           className="flex items-center gap-2 px-3 py-1.5 bg-white/80 border border-gray-300/60 rounded-lg hover:bg-white hover:border-gray-400/60 transition-colors"
           title={copied ? "Address copied!" : "Click to copy address"}
         >
-          <div className="w-2 h-2 rounded-full bg-gray-500" />
+          <div className="w-2 h-2 rounded-full bg-gray-500"></div>
           <span className="font-mono text-xs font-medium text-gray-800">
-            {shortAddress}
+            {`${evmAddress?.slice(0, 6)}...${evmAddress?.slice(-4)}`}
           </span>
           {copied ? (
             <svg
@@ -114,10 +74,8 @@ export function GlobalHeader() {
             </svg>
           )}
         </button>
-
-        {/* Fund Wallet 버튼 – 아직 모달은 없으니 onClick은 비워둠 */}
         <button
-          onClick={() => {}}
+          onClick={() => setIsModalOpen(true)}
           className="w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"
           title="Fund Wallet"
         >
@@ -135,8 +93,6 @@ export function GlobalHeader() {
             />
           </svg>
         </button>
-
-        {/* Sign Out 버튼 */}
         <button
           onClick={signOut}
           className="w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"

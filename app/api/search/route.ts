@@ -50,7 +50,7 @@ function calcFitnessScore(params: {
   const test = params.testScore ? params.testScore / 100 : 0;
   const pricePenalty = Math.min(
     params.priceAnchor ? (params.price ?? 0) / params.priceAnchor : 0,
-    2,
+    2
   );
 
   const raw =
@@ -67,7 +67,9 @@ function buildRationale(agent: AgentRow, similarity: number, fitness: number) {
   const parts: string[] = [];
   parts.push(`similarity ${similarity.toFixed(2)}`);
   if (agent.rating_avg != null) {
-    parts.push(`rating ${agent.rating_avg.toFixed(2)} (${agent.rating_count} reviews)`);
+    parts.push(
+      `rating ${agent.rating_avg.toFixed(2)} (${agent.rating_count} reviews)`
+    );
   }
   if (agent.test_score != null) {
     parts.push(`test_score ${agent.test_score.toFixed(1)}`);
@@ -96,14 +98,17 @@ export async function POST(request: Request) {
     console.log("[search] raw body", body);
     const query = (body?.query ?? "").toString().trim();
     if (!query) {
-      return NextResponse.json({ ok: false, error: "query is required" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "query is required" },
+        { status: 400 }
+      );
     }
 
     const topK = clamp(toNumber(body?.topK, DEFAULT_TOP_K), 1, MAX_TOP_K);
     const matchThreshold = clamp(
       toNumber(body?.matchThreshold, DEFAULT_MATCH_THRESHOLD),
       0,
-      1,
+      1
     );
     const priceMax = body?.priceMax != null ? toNumber(body.priceMax, DEFAULT_PRICE_ANCHOR) : null;
     const priceAnchor = priceMax ?? DEFAULT_PRICE_ANCHOR;
@@ -116,7 +121,10 @@ export async function POST(request: Request) {
     });
 
     if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({ ok: false, error: "OPENAI_API_KEY is not set" }, { status: 500 });
+      return NextResponse.json(
+        { ok: false, error: "OPENAI_API_KEY is not set" },
+        { status: 500 }
+      );
     }
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -163,7 +171,9 @@ export async function POST(request: Request) {
       (typeof toolCalls)[number],
       { type: "function"; function?: { arguments: string; name?: string } }
     >;
-    const isFunctionToolCall = (call: (typeof toolCalls)[number]): call is FunctionToolCall => {
+    const isFunctionToolCall = (
+      call: (typeof toolCalls)[number]
+    ): call is FunctionToolCall => {
       if (call.type !== "function") return false;
       const fn = (call as { function?: { arguments?: unknown } }).function;
       return typeof fn?.arguments === "string";
@@ -198,10 +208,12 @@ export async function POST(request: Request) {
     const rpcMatchThreshold = clamp(
       toNumber(toolArgs?.matchThreshold, matchThreshold),
       0,
-      1,
+      1
     );
     const rpcPriceMax =
-      toolArgs?.priceMax != null ? toNumber(toolArgs.priceMax, priceAnchor) : priceMax;
+      toolArgs?.priceMax != null
+        ? toNumber(toolArgs.priceMax, priceAnchor)
+        : priceMax;
     const rpcPriceAnchor = rpcPriceMax ?? priceAnchor;
     console.log("[search] rpc params", {
       rpcTopK,
@@ -225,7 +237,7 @@ export async function POST(request: Request) {
     if (matchError) {
       return NextResponse.json(
         { ok: false, error: `match_agents failed: ${matchError.message}` },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -323,7 +335,7 @@ export async function POST(request: Request) {
     let agentQuery = supabase
       .from("agents")
       .select(
-        "id, name, author, description, category, url, pricing_model, price, rating_avg, rating_count, test_score",
+        "id, name, author, description, category, url, pricing_model, price, rating_avg, rating_count, test_score"
       )
       .in("id", matchedIds);
     if (rpcPriceMax != null) {
@@ -339,12 +351,12 @@ export async function POST(request: Request) {
     if (agentError) {
       return NextResponse.json(
         { ok: false, error: `agent fetch failed: ${agentError.message}` },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
     const matchMap = new Map<string, number>(
-      matchRows.map((row) => [row.agent_id, row.similarity]),
+      matchRows.map((row) => [row.agent_id, row.similarity])
     );
 
     const combined = (agents ?? []).map((agent: AgentRow) => {
@@ -375,7 +387,11 @@ export async function POST(request: Request) {
       .map((agent, index) => ({
         ...agent,
         rank: index + 1,
-        rationale: buildRationale(agent, agent.similarity ?? 0, agent.fitness_score ?? 0),
+        rationale: buildRationale(
+          agent,
+          agent.similarity ?? 0,
+          agent.fitness_score ?? 0
+        ),
       }));
 
     const explanation = sorted
@@ -399,21 +415,20 @@ export async function POST(request: Request) {
     });
     
     const summaryMessage = `${AIexplanation.choices[0].message.content}`;
-    
+
     return NextResponse.json({
       ok: true,
       mode: "agents",
-      message: explanation ? (summaryMessage) : "Sorry, we couldn't find any agents that mathes your request",
+      message: explanation
+        ? summaryMessage
+        : "Sorry, we couldn't find any agents that mathes your request",
       results: sorted,
     });
-
-    
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { ok: false, error: "search failed" },
-      { status: 500 },
+      { status: 500 }
     );
   }
-
 }

@@ -44,4 +44,6 @@ export const categories: Category[] = [
   { id: "marketing", label: "Marketing" },
   { id: "analysis", label: "Analysis" },
   { id: "ops", label: "Operations" },
+  { id: "cartoonist", label: "Cartoonist" },
+  { id: "research", label: "Research" },
 ];
