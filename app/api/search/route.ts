@@ -54,11 +54,11 @@ function calcFitnessScore(params: {
   );
 
   const raw =
-    0.45 * sim +
-    0.2 * rating +
-    0.1 * ratingPop +
-    0.2 * test -
-    0.15 * pricePenalty;
+    0.8 * sim +
+    0.025 * rating +
+    0.025 * ratingPop +
+    0.1 * test -
+    0.05 * pricePenalty;
 
   return Math.max(raw, 0);
 }
