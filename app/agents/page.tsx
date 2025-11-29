@@ -122,9 +122,9 @@ export default function AgentsPage() {
   }, [agents, selectedCategory]);
 
   return (
-    <main className="h-full overflow-auto bg-white px-4 py-10 text-gray-900">
+    <main className="h-full overflow-auto bg-white px-4 text-gray-900">
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <header className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-semibold">Agents</h1>
             <p className="text-sm text-gray-600">
